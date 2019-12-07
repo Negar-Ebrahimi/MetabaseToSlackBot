@@ -7,3 +7,4 @@ SLACK_API_POST_MESSAGE = "https://slack.com/api/chat.postMessage"
 SLACK_API_LOOK_UP_BY_EMAIL = "https://slack.com/api/users.lookupByEmail"
 
 EMAIL_NEGAR = "ng.ebrahimi@jabama.com"
+EMAIL_HOSSEIN = "h.mehdikhah@Alibaba.ir"
