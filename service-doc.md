@@ -1,11 +1,11 @@
 MinCPU: 1
 MaxCPU: 1
-MinMemory: 2g
-MaxMemory: 2g
-MaxRequestPerSec: 200
+MinMemory: 1g
+MaxMemory: 1g
+MaxRequestPerSec: 0
 MinCountInstances: 1
-MaxCountInstances: 3
+MaxCountInstances: 1
 Edge: false
-Dependencies: swagger-automated-e2e
-HealthCheckAddr: /health
+Dependencies: http://metabase.jabama.com,https://slack.com
+HealthCheckAddr: -
 HealthCheckAddrVerbose: -
