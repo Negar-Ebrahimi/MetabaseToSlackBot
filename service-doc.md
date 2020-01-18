@@ -1,0 +1,11 @@
+MinCPU: 1
+MaxCPU: 1
+MinMemory: 2g
+MaxMemory: 2g
+MaxRequestPerSec: 200
+MinCountInstances: 1
+MaxCountInstances: 3
+Edge: false
+Dependencies: swagger-automated-e2e
+HealthCheckAddr: /health
+HealthCheckAddrVerbose: -
