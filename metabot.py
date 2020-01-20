@@ -18,7 +18,6 @@ def getMetabaseSession(username, password):
     headers = {
         'content-type': "application/json",
     }
-    print("!")
     response = requests.request("POST", env.METABASE_API_GET_SESSION, data=json.dumps(payload, separators=(',', ':')), headers=headers)
     Data.METABASE_SESSION = json.loads(response.text)['id']
 
@@ -110,7 +109,6 @@ def sendMessagesToSlackUsers(user_ids, message_blocks):
             'status': json.loads(response.text)['ok']
         })
         msg_indx = msg_indx + 1
-        print(response)
     return responses
 
 def metabot_job():
@@ -120,11 +118,11 @@ def metabot_job():
     user_ids = getUserIDByEmail([
         env.EMAIL_HOSSEIN,
         env.EMAIL_AHMAD,
-        EMAIL_NIMA_EBRAHIMI,
-        EMAIL_NIMA_RASOULZADE,
-        EMAIL_MASOUD,
-        EMAIL_SAMA,
-        EMAIL_MOHAMMAD_AMIRI
+        env.EMAIL_NIMA_EBRAHIMI,
+        env.EMAIL_NIMA_RASOULZADE,
+        env.EMAIL_MASOUD,
+        env.EMAIL_SAMA,
+        env.EMAIL_MOHAMMAD_AMIRI
     ])
     send_messages_status = sendMessagesToSlackUsers(user_ids, message_blocks)
 def metabase_get_session_job():
