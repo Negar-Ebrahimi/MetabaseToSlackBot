@@ -8,7 +8,8 @@ import requests
 import os
 import env
 
-METABASE_SESSION = ""
+class Data:
+    METABASE_SESSION = ""
 def getMetabaseSession(username, password):
     payload = {
         "username": username,
@@ -17,8 +18,9 @@ def getMetabaseSession(username, password):
     headers = {
         'content-type': "application/json",
     }
+    print("!")
     response = requests.request("POST", env.METABASE_API_GET_SESSION, data=json.dumps(payload, separators=(',', ':')), headers=headers)
-    METABASE_SESSION = json.loads(response.text)['id']
+    Data.METABASE_SESSION = json.loads(response.text)['id']
 
 def getMetaCards(card_ids):
     responses = []
@@ -27,7 +29,7 @@ def getMetaCards(card_ids):
 
         headers = {
             'Content-Type': "application/json",
-            'X-Metabase-Session': METABASE_SESSION,
+            'X-Metabase-Session': Data.METABASE_SESSION,
             }
 
         responses.append(requests.request("POST", url, headers=headers))    
@@ -84,7 +86,8 @@ def getUserIDByEmail(emails):
             'Authorization': "Bearer " + env.METABOT_TOKEN,
             }
         response = requests.request("GET", env.SLACK_API_LOOK_UP_BY_EMAIL, headers=headers, params=querystring)
-        responses.append(json.loads(response.text)['user']['id'])
+        if json.loads(response.text)['ok']:
+            responses.append(json.loads(response.text)['user']['id'])
     return responses
         
 def sendMessagesToSlackUsers(user_ids, message_blocks):
@@ -107,6 +110,7 @@ def sendMessagesToSlackUsers(user_ids, message_blocks):
             'status': json.loads(response.text)['ok']
         })
         msg_indx = msg_indx + 1
+        print(response)
     return responses
 
 def metabot_job():
@@ -116,15 +120,15 @@ def metabot_job():
     user_ids = getUserIDByEmail([
         env.EMAIL_HOSSEIN,
         env.EMAIL_AHMAD,
-        env.EMAIL_NIMA_EBRAHIMI,
-        env.EMAIL_NIMA_RASOULZADE,
-        env.EMAIL_MASOUD,
-        env.EMAIL_SAMA,
-        env.EMAIL_MOHAMMAD_AMIRI
+        EMAIL_NIMA_EBRAHIMI,
+        EMAIL_NIMA_RASOULZADE,
+        EMAIL_MASOUD,
+        EMAIL_SAMA,
+        EMAIL_MOHAMMAD_AMIRI
     ])
     send_messages_status = sendMessagesToSlackUsers(user_ids, message_blocks)
 def metabase_get_session_job():
-    getMetabaseSession(env.METABASE_USERNAME_NEGAR, env.METABASE_PASSWORD_NEGAR)
+    getMetabaseSession(env.METABASE_USERNAME, env.METABASE_PASSWORD)
 
 schedule.every().hour.do(metabot_job)
 schedule.every().day.at("23:59").do(metabot_job)
