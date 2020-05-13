@@ -125,10 +125,9 @@ def metabot_job():
         env.EMAIL_HOSSEIN,
         env.EMAIL_AHMAD,
         env.EMAIL_NIMA_EBRAHIMI,
-        env.EMAIL_NIMA_RASOULZADE,
         env.EMAIL_MASOUD,
-        env.EMAIL_SAMA,
-        env.EMAIL_MOHAMMAD_AMIRI
+        env.EMAIL_RASHA,
+        env.EMAIL_KAMYAB
     ])
     send_messages_status = sendMessagesToSlackUsers(user_ids, message_blocks)
     
