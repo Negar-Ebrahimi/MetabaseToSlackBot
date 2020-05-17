@@ -1,12 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[17]:
-
-
 import json
 import urllib.request
 
+import codecs
 import schedule
 import time
 
@@ -37,15 +32,25 @@ def getMetaCards(card_ids):
             'X-Metabase-Session': Data.METABASE_SESSION,
             }
 
-        responses.append(requests.request("POST", url, headers=headers))    
+        responses.append(requests.request("POST", url, headers=headers))
     return responses
 
-def getDataFromResponses(responses):
+def getDataFromTableResponses(responses):
     responses_data = []
+    for response in responses:
+        rows = json.loads(response.text)['data']['rows']
+        responses_data.append({
+            "rows": rows
+        })
+        
+    return responses_data
+
+def getDataFromPivotResponses(responses):
+    responses_data = []
+    
     for response in responses:
         cols = json.loads(response.text)['data']['cols']
         rows = json.loads(response.text)['data']['rows']
-
         col_titles = []
         for col in cols:
             col_titles.append(col['name'])
@@ -56,17 +61,36 @@ def getDataFromResponses(responses):
         })
     return responses_data
 
-def formatMessageBlocks(response_tables):
+def formatMessageBlocks(pivot_responses, table_responses = []):
     message_blocks = []
-    for response_table in response_tables:
+    for pivot_response in pivot_responses:
         plain_text = ""
-        response_table.get("columns").pop(0)
-        for row in response_table.get("rows"):
+        pivot_response.get("columns").pop(0)
+        for row in pivot_response.get("rows"):
             plain_text = plain_text + "*" + str(row[0]) + "*\n"
             indx = 1
-            for col in response_table.get("columns"):
+            for col in pivot_response.get("columns"):
                 plain_text = plain_text + col + ": " + str(row[indx]) + "\n"
                 indx = indx + 1
+            plain_text = plain_text + "\n"
+        message_blocks.append({
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": plain_text
+            }
+        })
+        message_blocks.append({
+            "type": "divider"
+        })
+        
+
+    for table_response in table_responses:
+        plain_text = ""
+        for row in table_response.get("rows"):
+            plain_text = plain_text + "*" + str(row[0]) + "*: "
+            for indx in range(len(row) - 1):
+                plain_text = plain_text + str(row[1+indx]) + "  "
             plain_text = plain_text + "\n"
         message_blocks.append({
             "type": "section",
@@ -118,9 +142,21 @@ def sendMessagesToSlackUsers(user_ids, message_blocks):
     return responses
 
 def metabot_job():
-    metacard_responses = getMetaCards([env.CARD_ID_ACCOMMODATION_BY_VENUE, env.CARD_ID_TOTAL, env.CARD_ID_SEARCH, env.CARD_ID_ORDER_STATUS])
-    responses_data = getDataFromResponses(metacard_responses)
-    message_blocks = formatMessageBlocks(responses_data)
+    pivot_metacard_responses = getMetaCards([
+        env.CARD_ID_ACCOMMODATION,
+        env.CARD_ID_ACCOMMODATION_BY_VENUE,
+        env.CARD_ID_TOTAL,
+        env.CARD_ID_SEARCH_CR
+    ])
+    pivot_responses_data = getDataFromPivotResponses(pivot_metacard_responses)
+    
+    table_metacard_responses = getMetaCards([
+        env.CARD_ID_ORDER_STATUS
+    ])
+    table_responses_data = getDataFromTableResponses(table_metacard_responses)
+    
+    message_blocks = formatMessageBlocks(pivot_responses_data, table_responses_data)
+    
     user_ids = getUserIDByEmail([
         env.EMAIL_HOSSEIN,
         env.EMAIL_AHMAD,
@@ -157,3 +193,4 @@ metabase_get_session_job()
 while 1:
     schedule.run_pending()
     time.sleep(1)
+
