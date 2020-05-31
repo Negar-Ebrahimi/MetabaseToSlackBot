@@ -1,7 +1,7 @@
 import json
 import urllib.request
 
-import codecs
+import copy
 import schedule
 import time
 
