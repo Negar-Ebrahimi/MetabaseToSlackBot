@@ -5,6 +5,7 @@ METABASE_PASSWORD = "2X_I3rgeEOSlCZ"
 
 CARD_ID_METABOT_RECIPIENTS = "1589"
 
+CARD_ID_JOBAUDIT = "1638"
 #Question cardIDs have been given to the Metabot dynamically.
 # CARD_ID_ACCOMMODATION = "162"
 # CARD_ID_ACCOMMODATION_BY_VENUE = "1551"
