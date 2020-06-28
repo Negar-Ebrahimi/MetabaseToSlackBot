@@ -1,15 +1,12 @@
 import json
-import urllib.request
-
+import requests
 import copy
 import schedule
 import time
 
-import requests
-import os
+# Metabot's own modules
 import env
 import THC_calculation as thc
-import pandas as pd
 
 class Data:
     METABASE_SESSION = ""
