@@ -117,13 +117,11 @@ def inferTheStepUserTypeFromJobAudit(job_audit):
     if not (job_audit["WorkflowStepId"] == "payment" \
     or job_audit["WorkflowStepId"] == "supplydecline"):
         return StepUserType
-    if job_audit["UpdatedBy"] == "" \
-    or (("jabama" in job_audit["UpdatedBy"] \
-    or "Jabama" in job_audit["UpdatedBy"] \
+    if (("jabama" not in job_audit["UpdatedBy"][1:].lower()
+    or job_audit["UpdatedBy"][0:6].lower() == "jabama"
     or job_audit["UpdatedBy"][0] == "0" \
     or job_audit["UpdatedBy"][0] == "+") \
-    and not(job_audit["UpdatedBy"][-10:] == "alibaba.ir" \
-            or job_audit["UpdatedBy"][-10:] == "Alibaba.ir")):
+    and not(job_audit["UpdatedBy"][-10:].lower() == "alibaba.ir")):
         StepUserType = "User"
     return StepUserType
   
