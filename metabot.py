@@ -159,7 +159,8 @@ def metabot_job():
             recipient[0],
             recipient[1],
             [] if recipient[2] == '' else [int(pivot_question_cardIDs) for pivot_question_cardIDs in recipient[2].split(',')],
-            [] if recipient[3] == '' else [int(table_question_cardIDs) for table_question_cardIDs in recipient[3].split(',')]
+            [] if recipient[3] == '' else [int(table_question_cardIDs) for table_question_cardIDs in recipient[3].split(',')],
+            recipient[4]
         ] for recipient in (getDataFromTableResponses(recipients_metacard)[0]['rows'])]
     #End of getting the recipients' list
     
@@ -180,6 +181,7 @@ def metabot_job():
         user_id = getUserIDByEmail(send_what_to_a_recipient[1])
         pivot_question_cardIDs = send_what_to_a_recipient[2]
         table_question_cardIDs = send_what_to_a_recipient[3]
+        receive_THC = send_what_to_a_recipient[4]
         if user_id == [] or (pivot_question_cardIDs == [] and table_question_cardIDs == []):
             return
         message_blocks= []
@@ -197,7 +199,7 @@ def metabot_job():
         #End of extracting this user's personalized question responses 
         
         #Include the THC report in this recipient's responses data if his name is among those who should receive it.
-        if send_what_to_a_recipient[0] in ['EMAIL_AHMAD', 'EMAIL_HOSSEIN', 'EMAIL_MOHSEN']:
+        if receive_THC == True:
             thc.Data.METABASE_SESSION = Data.METABASE_SESSION
             thc_result_df = thc.host_conclusion_job()
             thc_table_response = TransformDataframeToTableReponse(thc_result_df)
